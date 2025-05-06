@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Medicament extends Model
+class Commande extends Model
 {
-    use HasFactory;
-
     protected $guarded = ['id'];
 
-    public function commandes()
+    public function medicaments()
     {
-        return $this->belongsToMany(Commande::class)
+        return $this->belongsToMany(Medicament::class)
             ->using(CommandeMedicament::class)
             ->withPivot('quantity')
             ->withTimestamps();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
