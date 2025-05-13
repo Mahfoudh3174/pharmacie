@@ -1,45 +1,60 @@
 <?php
 
+use App\Http\Controllers\Category\CategryController;
 use App\Http\Controllers\ProfileController;
+
+use App\Http\Controllers\Commande\CommandeController;
+use App\Http\Controllers\FactureController;
+use App\Http\Controllers\Fournisseur\FournisseurController;
+use App\Http\Controllers\Medicament\MedicamentController ;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Medicaments routes
+    Route::get('/medicaments', [MedicamentController::class, 'index'])->name('medicament.index');
+    Route::get('/medicament/create', [MedicamentController::class, 'create'])->name('medicament.create');
+    Route::post('/medicament', [MedicamentController::class, 'store'])->name('medicament.store');
+    Route::get('/medicament/{id}', [MedicamentController::class, 'show'])->name('medicament.show');
+    Route::get('/medicament/{id}/edit', [MedicamentController::class, 'edit'])->name('medicament.edit');
+    Route::patch('/medicament/{id}', [MedicamentController::class, 'update'])->name('medicament.update');
+    Route::delete('/medicament/{id}', [MedicamentController::class, 'destroy'])->name('medicament.destroy');
+    
+    
+    // Categories routes
+    Route::get('/categories', [CategryController::class, 'index'])->name('category.index');
+    Route::get('/category/create', [CategryController::class, 'create'])->name('category.create');
+    Route::post('/category', [CategryController::class, 'store'])->name('category.store');
+    Route::get('/category/{id}', [CategryController::class, 'show'])->name('category.show');
+    Route::get('/category/{id}/edit', [CategryController::class, 'edit'])->name('category.edit');
+    Route::patch('/category/{id}', [CategryController::class, 'update'])->name('category.update');
+    Route::delete('/category/{id}', [CategryController::class, 'destroy'])->name('category.destroy');
+    
+    // Commandes routes
+    Route::resource('commandes', CommandeController::class);
+    
+    // Fournisseurs routes
+    Route::resource('fournisseurs',FournisseurController::class);
+    
+    // Factures routes
+    Route::resource('factures', FactureController::class);
+    
+    // Users management
+    Route::resource('users', UserController::class);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-//medicament
-Route::get('/medicaments', [\App\Http\Controllers\Medicament\MedicamentController::class, 'index'])->name('medicaments.index');
-Route::get('/medicaments/create', [\App\Http\Controllers\Medicament\MedicamentController::class, 'create'])->name('medicaments.create');
-Route::post('/medicaments', [\App\Http\Controllers\Medicament\MedicamentController::class, 'store'])->name('medicaments.store');
-Route::get('/medicaments/{id}/edit', [\App\Http\Controllers\Medicament\MedicamentController::class, 'edit'])->name('medicaments.edit');
-Route::put('/medicaments/{id}', [\App\Http\Controllers\Medicament\MedicamentController::class, 'update'])->name('medicaments.update');
-Route::delete('/medicaments/{id}', [\App\Http\Controllers\Medicament\MedicamentController::class, 'destroy'])->name('medicaments.destroy');
-Route::get('/medicaments/{id}', [\App\Http\Controllers\Medicament\MedicamentController::class, 'show'])->name('medicaments.show');
-
-//commande
-Route::get('/commandes', [\App\Http\Controllers\Commande\CommandeController::class, 'index'])->name('commandes.index');
-Route::get('/commandes/create', [\App\Http\Controllers\Commande\CommandeController::class, 'create'])->name('commandes.create');
-Route::post('/commandes', [\App\Http\Controllers\Commande\CommandeController::class, 'store'])->name('commandes.store');
-Route::get('/commandes/{id}/edit', [\App\Http\Controllers\Commande\CommandeController::class, 'edit'])->name('commandes.edit');
-Route::put('/commandes/{id}', [\App\Http\Controllers\Commande\CommandeController::class, 'update'])->name('commandes.update');
-Route::delete('/commandes/{id}', [\App\Http\Controllers\Commande\CommandeController::class, 'destroy'])->name('commandes.destroy');
-Route::get('/commandes/{id}', [\App\Http\Controllers\Commande\CommandeController::class, 'show'])->name('commandes.show');
-//category
-Route::get('/categories', [\App\Http\Controllers\Category\CategryController::class, 'index'])->name('categories.index');
-Route::get('/categories/create', [\App\Http\Controllers\Category\CategryController::class, 'create'])->name('categories.create');
-Route::post('/categories', [\App\Http\Controllers\Category\CategryController::class, 'store'])->name('categories.store');
-Route::get('/categories/{id}/edit', [\App\Http\Controllers\Category\CategryController::class, 'edit'])->name('categories.edit');
-Route::put('/categories/{id}', [\App\Http\Controllers\Category\CategryController::class, 'update'])->name('categories.update');
-Route::delete('/categories/{id}', [\App\Http\Controllers\Category\CategryController::class, 'destroy'])->name('categories.destroy');
-Route::get('/categories/{id}', [\App\Http\Controllers\Category\CategryController::class, 'show'])->name('categories.show');
 
 require __DIR__.'/auth.php';

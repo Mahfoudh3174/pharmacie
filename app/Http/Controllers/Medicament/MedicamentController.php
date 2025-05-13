@@ -12,9 +12,9 @@ class MedicamentController extends Controller
 
 public function index()
 {
-    $medicaments = Medicament::get();
+    $medicaments = Medicament::paginate(10);
     
-    return view('medicament.index', compact('medicaments'));
+    return view('admin.medicament.index', compact('medicaments'));
     
 }
 public function create()
@@ -39,7 +39,7 @@ public function store(Request $request)
         'category_id' => $request->category_id,
     ]);
 
-    return to_route('medicaments.index')->with('success', 'Medicament created successfully.');
+    return to_route('medicament.index')->with('success', 'Medicament created successfully.');
 }
 public function show($id)
 {
@@ -64,13 +64,13 @@ public function update(Request $request, $id)
     $medicament = Medicament::findOrFail($id);
     $medicament->update($request->all());
 
-    return to_route('medicaments.index')->with('success', 'Medicament updated successfully.');
+    return to_route('medicament.index')->with('success', 'Medicament updated successfully.');
 }
 public function destroy($id)
 {
     $medicament = Medicament::findOrFail($id);
     $medicament->delete();
 
-    return to_route('medicaments.index')->with('success', 'Medicament deleted successfully.');
+    return to_route('medicament.index')->with('success', 'Medicament deleted successfully.');
 }
 }
