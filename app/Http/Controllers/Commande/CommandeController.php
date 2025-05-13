@@ -71,10 +71,5 @@ class CommandeController extends Controller
         $commande->delete();
         return redirect()->route('commandes.index')->with('success', 'Commande deleted successfully.');
     }
-    public function restore($id)
-    {
-        $commande = Commande::withTrashed()->findOrFail($id);
-        $commande->restore();
-        return redirect()->route('commandes.index')->with('success', 'Commande restored successfully.');
-    }
+   
 }
