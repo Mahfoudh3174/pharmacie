@@ -170,6 +170,10 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(0)">
+                                      <div class="flex items-center">
+                                        image
+                                    </div>
+
                                     <div class="flex items-center">
                                         Nom
                                         <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -206,20 +210,9 @@
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
-                                            @if($med->pivot->stock == 0)
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                                </svg>
-                                            @elseif($med->pivot->stock < 10)
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                                </svg>
-                                            @else
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                                </svg>
-                                            @endif
+                                      
+                                         <div class="ml-4 w-16 h-16">
+                                            <img src="{{ asset('storage/'.$med->image) }}" class="text-sm font-medium text-gray-900 cover h-full w-full object-cover" alt="{{ $med->name }}">
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">{{ $med->name }}</div>
@@ -315,29 +308,106 @@
                 @endif
             </div>
 
+            <!-- Recherche et Filtres pour Commandes -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-8 mt-8">
+                <form action="{{ route('dashboard', $pharmacy) }}" method="GET" class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-12 sm:gap-4">
+                    <div class="sm:col-span-5 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <input 
+                            type="text" 
+                            name="order_search" 
+                            placeholder="Rechercher des commandes..." 
+                            value="{{ request('order_search') }}"
+                            class="w-full pl-10 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        >
+                    </div>
+                    
+                    <div class="sm:col-span-3">
+                        <select name="order_status" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Tous les statuts</option>
+                            <option value="pending" {{ request('order_status') == 'pending' ? 'selected' : '' }}>En attente</option>
+                            <option value="validated" {{ request('order_status') == 'validated' ? 'selected' : '' }}>Validé</option>
+                            <option value="rejected" {{ request('order_status') == 'rejected' ? 'selected' : '' }}>Rejeté</option>
+                        </select>
+                    </div>
+                    
+                    <div class="sm:col-span-2">
+                        <input 
+                            type="date" 
+                            name="order_date" 
+                            value="{{ request('order_date') }}"
+                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        >
+                    </div>
+                    
+                    <div class="sm:col-span-2 flex gap-2">
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                            Filtrer
+                        </button>
+                        <a href="{{ route('dashboard', $pharmacy) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </a>
+                    </div>
+                </form>
+            </div>
+
             <!-- Section des Commandes -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                     <h2 class="text-lg font-semibold text-gray-900">Gestion des Commandes</h2>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table id="ordersTable" class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    N° Commande
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(0, false, 'ordersTable')">
+                                    <div class="flex items-center">
+                                        N° Commande
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                        </svg>
+                                    </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Client
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(1, false, 'ordersTable')">
+                                    <div class="flex items-center">
+                                        Client
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                        </svg>
+                                    </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Date
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(2, false, 'ordersTable')">
+                                    <div class="flex items-center">
+                                        Date
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                        </svg>
+                                    </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Montant
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(3, true, 'ordersTable')">
+                                    <div class="flex items-center">
+                                        Montant
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                        </svg>
+                                    </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Statut
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(4, false, 'ordersTable')">
+                                    <div class="flex items-center">
+                                        Statut
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                        </svg>
+                                    </div>
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
@@ -345,8 +415,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($commandes as $commande )
-                                
+                            @forelse ($commandes as $commande)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {{$commande->uuid}}
@@ -361,30 +430,62 @@
                                     {{$commande->amount}}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                    {{$commande->status}}
-                                    </span>
+                                    @if($commande->status == 'pending')
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            En attente
+                                        </span>
+                                    @elseif($commande->status == 'validated')
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                            Validé
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                            Rejeté
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{route("commandes.validate", $commande->id)}}" class="text-green-600 hover:text-green-900">
-                                            Valider
-                                        </a>
-                                        <button onclick="showRejectModal({{$commande->id}})" class="text-red-600 hover:text-red-900">
-                                            Rejeter
-                                        </button>
+                                        @if($commande->status == 'pending')
+                                            <a href="{{route("commandes.validate", $commande->id)}}" class="text-green-600 hover:text-green-900">
+                                                Valider
+                                            </a>
+                                            <button onclick="showRejectModal({{$commande->id}})" class="text-red-600 hover:text-red-900">
+                                                Rejeter
+                                            </button>
+                                        @endif
                                         <a href="{{route('commandes.details', $commande->id)}}" class="text-blue-600 hover:text-blue-900">
                                             Détails
                                         </a>
                                     </div>
                                 </td>
                             </tr>
-                
-                            @endforeach
-
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <h3 class="mt-2 text-lg font-medium text-gray-900">Aucune commande trouvée</h3>
+                                    <p class="mt-1 text-sm text-gray-500">Essayez d'ajuster vos filtres de recherche.</p>
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Pagination -->
+                @if($commandes->hasPages())
+                <div class="px-6 py-4 border-t bg-gray-50 flex flex-col sm:flex-row items-center justify-between">
+                    <div class="text-sm text-gray-700 mb-2 sm:mb-0">
+                        Affichage de <span class="font-medium">{{ $commandes->firstItem() }}</span> à <span class="font-medium">{{ $commandes->lastItem() }}</span> sur <span class="font-medium">{{ $commandes->total() }}</span> résultats
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        {{ $commandes->withQueryString()->links() }}
+                    </div>
+                </div>
+                @endif
             </div>
 
         @else
@@ -486,8 +587,8 @@
 
     <script>
         // Table sorting function
-        function sortTable(columnIndex, isNumeric = false) {
-            const table = document.getElementById("medicationsTable");
+        function sortTable(columnIndex, isNumeric = false, tableId = 'medicationsTable') {
+            const table = document.getElementById(tableId);
             const tbody = table.querySelector("tbody");
             const rows = Array.from(tbody.querySelectorAll("tr"));
             

@@ -23,8 +23,28 @@ class DashboardController extends Controller
         // Get all medications for quick add modal
         $allMedications = Medication::orderBy('name')->get();
 
-        $commandes = Commande::simplePaginate(5);
-    
+        // Enhanced commandes query with filtering and sorting
+        $commandes = $pharmacy
+            ? $pharmacy->commandes()
+                ->with('user') // Eager load user relationship
+                ->when($request->order_search, function($q, $search) {
+                    $q->where(function($query) use ($search) {
+                        $query->where('uuid', 'like', "%{$search}%")
+                              ->orWhereHas('user', function($userQuery) use ($search) {
+                                  $userQuery->where('name', 'like', "%{$search}%");
+                              });
+                    });
+                })
+                ->when($request->order_status, fn($q, $status) => $q->where('status', $status))
+                ->when($request->order_date, fn($q, $date) => $q->whereDate('date', $date))
+                ->when($request->order_sort, function($q, $sort) use ($request) {
+                    $direction = $request->order_direction ?? 'desc';
+                    $q->orderBy($sort, $direction);
+                }, fn($q) => $q->latest())
+                ->paginate(5)
+                ->withQueryString()
+            : collect();
+
         // Get medications if pharmacy exists with enhanced filtering
         $medications = $pharmacy 
             ? $pharmacy->medications()
@@ -64,7 +84,9 @@ class DashboardController extends Controller
             'commandes' => $commandes,
             'categories' => Medication::distinct()->pluck('category'),
             'sortDirection' => $request->direction === 'desc' ? 'desc' : 'asc',
-            'currentSort' => $request->sort
+            'currentSort' => $request->sort,
+            'orderSortDirection' => $request->order_direction === 'asc' ? 'asc' : 'desc',
+            'currentOrderSort' => $request->order_sort
         ]);
     }
 }

@@ -12,6 +12,7 @@ class Medication extends Model
         'category',
         'dosage_form',
         'strength',
+        "image"
     ];
 
     public function pharmacies()

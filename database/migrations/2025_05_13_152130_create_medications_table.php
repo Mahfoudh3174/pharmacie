@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('category');
             $table->string('dosage_form');
+            $table->string('image');
             $table->string('strength');
             $table->timestamps();
             

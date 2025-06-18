@@ -39,7 +39,8 @@ class PharmacyController extends Controller
             'address' => ['required', 'string'],
             'city' => ['required', 'string'],
             'state' => ['required', 'string'],
-  
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
         ]);
 
         $pharmacy = Pharmacy::create($validated);

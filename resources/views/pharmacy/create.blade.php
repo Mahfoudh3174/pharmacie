@@ -49,14 +49,14 @@
                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400"
                                    placeholder="Nouackchott">
                         </div>
+
+                        <div>
+                            <!-- Hidden Latitude and Longitude -->
+                            <input type="hidden" id="latitude" name="latitude">
+                            <input type="hidden" id="longitude" name="longitude">
+                        </div>
                      
                     </div>
-
-                    <!-- Helper Text -->
-                    <p class="text-xs text-gray-500">
-                        You can find coordinates on 
-                        <a href="https://www.google.com/maps" target="_blank" class="text-green-600 hover:underline">Google Maps</a>.
-                    </p>
 
                     <!-- Actions -->
                     <div class="flex items-center justify-between pt-4">
@@ -74,4 +74,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    document.getElementById("latitude").value = position.coords.latitude;
+                    document.getElementById("longitude").value = position.coords.longitude;
+                },
+                function (error) {
+                    console.warn("Location access denied or failed:", error.message);
+                }
+            );
+        } else {
+            console.warn("Geolocation is not supported by this browser.");
+        }
+    });
+</script>
+
 </x-layouts.app>

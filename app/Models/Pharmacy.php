@@ -11,13 +11,20 @@ class Pharmacy extends Model
         'address',
         'city',
         'state',
+        'longitude',
+        'latitude'
     ];
 
-        public function medications()
+    public function medications()
     {
         return $this->belongsToMany(Medication::class)
             ->withPivot(['price', 'stock'])
             ->withTimestamps();
+    }
+    
+    public function commandes()
+    {
+        return $this->hasMany(Commande::class);
     }
 
     public function user()

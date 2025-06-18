@@ -12,6 +12,8 @@ class Commande extends Model
         "status",
         "amount",
         "reject_reason",
+        "pharmacy_id",
+        "uuid",
     ];
 
     public function user()
